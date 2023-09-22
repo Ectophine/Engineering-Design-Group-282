@@ -1,6 +1,6 @@
 body {
-    background-color: #f9f9f9;
-    color: #333333;
+    background-color: #bdedfc;
+    color: #011e42;
     font-family: "Helvetica Neue", Arial, sans-serif;
     font-size: 15px;
     margin: 0px;
@@ -14,13 +14,13 @@ body {
 }
 
 #right-column {
-    background-color: #f4f4f4;
+    background-color: #9ee3f7;
     padding: 0rem 2rem;
     min-height: 100vh;
 }
 
-h5 {
-    color: #2c8cff;
+h4 {
+    color: #579ff7;
     font-weight: 300;
 }
 
@@ -31,6 +31,13 @@ h5 {
 
 #control-card label {
     font-weight: bold;
+    font-size: 18px;
+    color: #011e42;
+}
+
+#control-card {
+    background-color: #8dbdf7;
+    border-radius: 0.675rem;
 }
 
 .graph_card {
@@ -44,5 +51,16 @@ h5 {
 .graph_card h6 {
     margin:  0 7px;
     padding-bottom: 7px;
-    border-bottom:  1px solid #ccc;
+    border-bottom:  1px solid #368cf5;
+}
+
+#title, #sub-title, #progress-statement {
+    margin: auto;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    text-align: center;
+}
+
+#progress-statement {
+    padding: 1rem;
+    background-color: #8dbdf7;
 }

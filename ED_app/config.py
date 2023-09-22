@@ -1,4 +1,4 @@
 # Global Configurations
-timeline = ['', 'Weekly', 'Monthly', 'Yearly']
-usage = ['Water Usage', 'Power Usage', 'Both']
-view = ['', 'Amount', 'Cost', 'Both']
+timeline = ['Daily', 'Weekly', 'Monthly', 'All Time']
+usage = ['Water Usage', 'Power Usage']
+view = ['Amount', 'Cost']
