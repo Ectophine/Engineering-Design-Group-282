@@ -1,7 +1,7 @@
 from ED_app.main import app
 from ED_app.views.linegraph import Linegraph
 from ED_app.views.menu import make_menu_layout
-from ED_app.data import get_data, set_baseline
+from ED_app.data import get_data, set_baseline, change_timeline
 from dash import html
 from dash.dependencies import Input, Output
 
@@ -97,16 +97,6 @@ if __name__ == '__main__':
             ]
         )
 
-
-        # Filters data based on input panel
-        # def filter_data(timeline, usage, view):
-        #     filtered_df = df
-        #
-        #     # if timeline != '':
-        #         # filtered_df = filtered_df[filtered_df'']
-        #     if usage != '':
-        #         filtered_df
-
         @app.callback(
             Output(linegraph.html_id, 'figure'),
             Input("select-timeline", "value"),
@@ -114,13 +104,23 @@ if __name__ == '__main__':
             Input('select-view', 'value')
         )
         def update_plot(timeline, usage, view):
+            # Filters the df based on the chosen timeline
+            new_df = df
+            if timeline != 'Daily':
+                new_df = change_timeline(df, timeline)
+
+            # Generates a graph with two lines based on inputs
+            if usage == 'Both':
+                return linegraph.generate_both_linegraph(new_df, view)
+
+            # Generates a graph with one line based on inputs
             if view == 'Amount':
-                return linegraph.generate_linegraph(df, usage)
+                return linegraph.generate_linegraph(new_df, usage)
             elif view == 'Cost':
                 if usage == 'Water Usage':
-                    return linegraph.generate_linegraph(df, 'Water Cost')
+                    return linegraph.generate_linegraph(new_df, 'Water Cost')
                 elif usage == 'Power Usage':
-                    return linegraph.generate_linegraph(df, 'Power Cost')
-            return linegraph.generate_linegraph(df, 'Water Usage')
+                    return linegraph.generate_linegraph(new_df, 'Power Cost')
+            return linegraph.generate_linegraph(new_df, 'Water Usage')
 
     app.run_server(debug=False, dev_tools_ui=False)

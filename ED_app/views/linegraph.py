@@ -38,3 +38,29 @@ class Linegraph(html.Div):
         )
 
         return self.fig
+
+    def generate_both_linegraph(self, new_dataframe, view):
+        self.df = new_dataframe
+        if view == 'Amount':
+            self.fig = px.line(new_dataframe, x='Date', y=['Water Usage', 'Power Usage'])
+            self.feature_y = 'Usage'
+        elif view == 'Cost':
+            self.fig = px.line(new_dataframe, x='Date', y=['Water Cost', 'Power Cost'])
+            self.feature_y = 'Cost'
+
+        self.feature_x = 'Date'
+
+        self.fig.update_layout(
+            yaxis_zeroline=False,
+            xaxis_zeroline=False,
+            dragmode='select'
+        )
+        self.fig.update_xaxes(fixedrange=True)
+        self.fig.update_yaxes(fixedrange=True)
+
+        self.fig.update_layout(
+            xaxis_title=self.feature_x,
+            yaxis_title=self.feature_y
+        )
+
+        return self.fig
