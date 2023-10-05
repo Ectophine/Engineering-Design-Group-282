@@ -64,3 +64,8 @@ h4 {
     padding: 1rem;
     background-color: #8dbdf7;
 }
+
+#baseline-reminder {
+    margin: auto;
+    text-align: center;
+}
