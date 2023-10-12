@@ -1,9 +1,11 @@
 from ED_app.main import app
 from ED_app.views.linegraph import Linegraph
 from ED_app.views.menu import make_menu_layout
-from ED_app.data import get_data, set_baseline, change_timeline
+from ED_app.data import get_data, change_timeline, calculate_savings
 from dash import html
 from dash.dependencies import Input, Output
+from ED_app.cost import liters_conversion, temperature_conversion
+from ED_app.randomstatement import random_statement
 
 if __name__ == '__main__':
     df = get_data()
@@ -59,10 +61,22 @@ if __name__ == '__main__':
         else:
             progress_statement = 'You used the same amount of water this shower as last time.'
 
-        df['Water Cost'] = df['Water Usage'] * 2.50
-        df['Power Cost'] = df['Power Usage'] * 3.50
+        df['Water Cost'] = liters_conversion(df['Water Usage'], 'money')
+        df['Gas Usage'] = temperature_conversion(df['Temperature'], df['Water Usage'], 'gas')
+        df['Gas Cost'] = temperature_conversion(df['Temperature'], df['Water Usage'], 'money')
+
+        df = calculate_savings(df)
+
+        df_after_baseline = df.loc[7:]
+        total_water_use_savings = df_after_baseline['Water Usage Savings'].sum()
+        total_gas_use_savings = df_after_baseline['Gas Usage Savings'].sum()
+        total_water_cost_savings = df_after_baseline['Water Cost Savings'].sum()
+        total_gas_cost_savings = df_after_baseline['Gas Cost Savings'].sum()
 
         linegraph = Linegraph("Line Graph", 'Date', 'Water Usage', df)
+
+        random_statement = random_statement(df, total_water_use_savings, total_gas_use_savings)
+
         app.layout = html.Div(
             id='app_container',
             children=[
@@ -91,11 +105,37 @@ if __name__ == '__main__':
                         html.Div(
                             id='progress-statement',
                             children=html.H3(progress_statement)
+                        ),
+                        html.Div(
+                            id='random-statement',
+                            children=html.H3(random_statement)
+                        ),
+                        html.Div(
+                            id='savings-boxes',
+                            children=[
+                                html.Div(id='water-use-savings',
+                                         children=[html.H4('You saved'),
+                                                   html.H3(total_water_use_savings),
+                                                   html.H4('liters of water so far!')]),
+                                html.Div(id='gas-use-savings',
+                                         children=[html.H4('You saved'),
+                                                   html.H3(total_gas_use_savings),
+                                                   html.H4('cubic meters of gas so far!')]),
+                                html.Div(id='water-cost-savings',
+                                         children=[html.H4('You saved'),
+                                                   html.H3(total_water_cost_savings),
+                                                   html.H4('euro in water so far!')]),
+                                html.Div(id='gas-cost-savings',
+                                         children=[html.H4('You saved'),
+                                                   html.H3(total_gas_cost_savings),
+                                                   html.H4('euro in gas so far!')]),
+                            ]
                         )
                     ]
                 )
             ]
         )
+
 
         @app.callback(
             Output(linegraph.html_id, 'figure'),
@@ -119,8 +159,8 @@ if __name__ == '__main__':
             elif view == 'Cost':
                 if usage == 'Water Usage':
                     return linegraph.generate_linegraph(new_df, 'Water Cost')
-                elif usage == 'Power Usage':
-                    return linegraph.generate_linegraph(new_df, 'Power Cost')
+                elif usage == 'Gas Usage':
+                    return linegraph.generate_linegraph(new_df, 'Gas Cost')
             return linegraph.generate_linegraph(new_df, 'Water Usage')
 
     app.run_server(debug=False, dev_tools_ui=False)

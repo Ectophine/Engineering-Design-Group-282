@@ -54,7 +54,7 @@ h4 {
     border-bottom:  1px solid #368cf5;
 }
 
-#title, #sub-title, #progress-statement {
+#title, #sub-title, #progress-statement, #random-statement {
     margin: auto;
     font-family: "Helvetica Neue", Arial, sans-serif;
     text-align: center;
@@ -68,4 +68,33 @@ h4 {
 #baseline-reminder {
     margin: auto;
     text-align: center;
+}
+
+#random-statement {
+    padding: 1rem;
+    background-color: #8dbdf7;
+    text-align: center;
+}
+
+#savings-boxes {
+    padding: 1rem;
+    background-color: #8dbdf7;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    margin: auto;
+}
+
+#water-use-savings, #gas-use-savings, #water-cost-savings, #gas-cost-savings {
+    width: 24%;
+    float: left;
+    margin: auto;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    text-align: center;
+    color: #011e42;
+    background-color: #bdedfc;
+    border-radius: 0.675rem;
+    border-color: #8dbdf7;
+    padding: 1rem;
 }

@@ -42,10 +42,10 @@ class Linegraph(html.Div):
     def generate_both_linegraph(self, new_dataframe, view):
         self.df = new_dataframe
         if view == 'Amount':
-            self.fig = px.line(new_dataframe, x='Date', y=['Water Usage', 'Power Usage'])
+            self.fig = px.line(new_dataframe, x='Date', y=['Water Usage', 'Gas Usage'])
             self.feature_y = 'Usage'
         elif view == 'Cost':
-            self.fig = px.line(new_dataframe, x='Date', y=['Water Cost', 'Power Cost'])
+            self.fig = px.line(new_dataframe, x='Date', y=['Water Cost', 'Gas Cost'])
             self.feature_y = 'Cost'
 
         self.feature_x = 'Date'
