@@ -2,45 +2,30 @@ from dash import dcc, html
 from ..config import timeline, usage, view
 
 
-def generate_description_card():
-    return html.Div(
-        id='description-card',
-        children=[
-            html.H4("Input Panel"),
-            html.Div(
-                id="intro",
-                children=' ',
-            )
-        ]
-    )
-
-
-def generate_control_card():
-    return html.Div(
-        id="control-card",
-        children=[
-            html.Label("Timeline"),
-            dcc.RadioItems(
-                id="select-timeline",
-                options=[{"label": i, "value": i} for i in timeline],
-                value=timeline[0],
-            ),
-            html.Br(),
-            html.Label("Usage"),
-            dcc.RadioItems(
-                id="select-usage",
-                options=[{"label": i, "value": i} for i in usage],
-                value=usage[0],
-            ),
-            html.Label("View"),
-            dcc.RadioItems(
-                id="select-view",
-                options=[{"label": i, "value": i} for i in view],
-                value=view[0],
-            ),
-        ], style={"textAlign": "float-left"}
-    )
-
-
 def make_menu_layout():
-    return [generate_description_card(), generate_control_card()]
+    return (
+        html.Div(
+            className='card',
+            children=[
+                html.H3("Adjust your dashboard"),
+                html.H4("Timeline"),
+                dcc.RadioItems(
+                    id="select-timeline",
+                    options=[{"label": i, "value": i} for i in timeline],
+                    value=timeline[0],
+                ),
+                html.H4("Usage"),
+                dcc.RadioItems(
+                    id="select-usage",
+                    options=[{"label": i, "value": i} for i in usage],
+                    value=usage[0],
+                ),
+                html.H4("View"),
+                dcc.RadioItems(
+                    id="select-view",
+                    options=[{"label": i, "value": i} for i in view],
+                    value=view[0],
+                )
+            ]
+        )
+    )

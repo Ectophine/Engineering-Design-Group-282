@@ -1,100 +1,101 @@
 body {
-    background-color: #bdedfc;
-    color: #011e42;
+    background-color: #112736;
+    color: #b7d3e0;
     font-family: "Helvetica Neue", Arial, sans-serif;
-    font-size: 15px;
-    margin: 0px;
+    font-size: 16px;
+    margin: 0;
 }
 
-#left-column {
-    padding: 20px 2rem;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+h1, h2, h3, h4, h5 {
+    margin: 0;
 }
 
-#right-column {
-    background-color: #9ee3f7;
-    padding: 0rem 2rem;
-    min-height: 100vh;
+h1 {
+    font-size: 30px;
+    font-weight: bolder;
+}
+
+h2 {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 25px;
 }
 
 h4 {
-    color: #579ff7;
-    font-weight: 300;
+    font-size: 20px;
 }
 
-#intro {
-    margin: 20px 0px;
-    text-align: justify;
-}
-
-#control-card label {
-    font-weight: bold;
+label {
     font-size: 18px;
-    color: #011e42;
 }
 
-#control-card {
-    background-color: #8dbdf7;
-    border-radius: 0.675rem;
+.columns {
+    display: grid;
 }
 
-.graph_card {
-    background-color: white;
-    border-radius: 0.675rem;
-    padding: 1rem;
-    margin: auto;
-    margin-top: 20px;
+.columns.main {
+    grid-template-columns: 1fr 4fr;
 }
 
-.graph_card h6 {
-    margin:  0 7px;
-    padding-bottom: 7px;
-    border-bottom:  1px solid #368cf5;
+.columns.four {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
-#title, #sub-title, #progress-statement, #random-statement {
-    margin: auto;
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    text-align: center;
+.columns.two {
+    grid-template-columns: 1fr 1fr;
 }
 
-#progress-statement {
-    padding: 1rem;
-    background-color: #8dbdf7;
+.card {
+    background: rgb(75,116,136);
+    background: linear-gradient(325deg, rgba(75,116,136,1) 0%, rgba(54,92,112,1) 40%, rgba(42,78,98,1) 100%);
+    margin: 10px;
+    border-radius: 15px;
+    padding: 15px;
 }
 
-#baseline-reminder {
-    margin: auto;
-    text-align: center;
+.header {
+    padding: 15px 15px 10px 15px;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    height: 65px;
 }
 
-#random-statement {
-    padding: 1rem;
-    background-color: #8dbdf7;
-    text-align: center;
+.data {
+    display: flex;
+    flex-direction: column;
 }
 
-#savings-boxes {
-    padding: 1rem;
-    background-color: #8dbdf7;
-    text-align: center;
-    white-space: nowrap;
+#line-graph {
+    border-radius: 15px;
     overflow: hidden;
-    width: 100%;
-    margin: auto;
 }
 
-#water-use-savings, #gas-use-savings, #water-cost-savings, #gas-cost-savings {
-    width: 24%;
-    float: left;
-    margin: auto;
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    text-align: center;
-    color: #011e42;
-    background-color: #bdedfc;
-    border-radius: 0.675rem;
-    border-color: #8dbdf7;
-    padding: 1rem;
+.menu h4 {
+    margin-top: 10px;
+    margin-bottom: 2px;
 }
+
+.savings-boxes .card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.savings-boxes img {
+    height: 65px;
+    width: auto;
+}
+
+.savings-boxes h3 {
+    font-size: 40px;
+}
+
+.savings-boxes span {
+    font-size: 20px;
+    font-weight: lighter;
+}
+

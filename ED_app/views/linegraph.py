@@ -24,17 +24,15 @@ class Linegraph(html.Div):
         self.feature_x = 'Date'
         self.feature_y = usage
 
-        self.fig.update_layout(
-            yaxis_zeroline=False,
-            xaxis_zeroline=False,
-            dragmode='select'
-        )
         self.fig.update_xaxes(fixedrange=True)
         self.fig.update_yaxes(fixedrange=True)
 
         self.fig.update_layout(
+            yaxis_zeroline=False,
+            xaxis_zeroline=False,
+            dragmode='select',
             xaxis_title=self.feature_x,
-            yaxis_title=self.feature_y
+            yaxis_title=self.feature_y,
         )
 
         return self.fig

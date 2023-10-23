@@ -12,11 +12,27 @@ treesLiter = 1600
 Family_usage = (5 * 3.78541178)
 # Grams of C02 per cleaned liter of water
 C02_water = 0.3 * 10 ** -3
+# Liters in an average elephant trunk
+elephant_trunk = 16
+# Liters in a fishbowl
+fishbowl = 3
+# 45 mL in an average water balloon
+water_balloon = 45*10**-3
+# Liters per meter height when stacking water bottles of 0.5L
+water_bottle_height = 2.5
+# Liters per meter height when stacking beer crates
+beer_crate_height = 34.435
+# Liters of blood in the average human
+blood_volume = 5
+# Liters of urine daily
+urine_volume_daily = 1.4
 
 # Heat capacity of one liter water, J/L?C
 C = 4.2 * 10 ** 3
-# Average temperature of water in pipes, Celsius
-T_pipes = 16
+# Average temperature of water in pipes in summer, Celsius
+T_pipes_summer = 17.5
+# Average temperature of water in pipes in winter, Celsius
+T_pipes_winter = 12.5
 # Heat of combustion of natural gas
 Rv = 31.65 * 10 ** 6
 # Efficiency of a boiler
@@ -53,11 +69,36 @@ def liters_conversion(liters, metric='money'):
         conversion = liters / Family_usage
     if metric == 'C02':
         conversion = liters * C02_water
+    if metric == 'elephant_trunk':
+        conversion = liters/elephant_trunk
+    if metric == 'fishbowl':
+        conversion = liters/fishbowl
+    if metric == 'water_balloon':
+        conversion = liters/water_balloon
+    if metric == 'water_bottle':
+        conversion = liters/water_bottle_height
+    if metric == 'beer_crate':
+        conversion = liters/beer_crate_height
+    if metric == 'blood':
+        conversion = liters/blood_volume
+    if metric == 'urine_days':
+        conversion = liters/urine_volume_daily
     return conversion
 
 
 def temperature_conversion(temperature, liters, metric='money'):
+    if 4 < 5 < 11:
+        season = 'summer'
+    else:
+        season = 'winter'
+
+    if season == 'summer':
+        T_pipes = T_pipes_summer
+    if season == 'winter':
+        T_pipes = T_pipes_winter
+
     gas = C * (temperature - T_pipes) / (Rv * efficiency) * liters
+
     if metric == 'gas':
         return gas
     if metric == 'money':

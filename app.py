@@ -1,13 +1,31 @@
 from ED_app.main import app
 from ED_app.views.linegraph import Linegraph
 from ED_app.views.menu import make_menu_layout
-from ED_app.data import get_data, change_timeline, calculate_savings
+from ED_app.data import get_data, change_timeline, calculate_savings, FileModifiedHandler
 from dash import html
 from dash.dependencies import Input, Output
 from ED_app.cost import liters_conversion, temperature_conversion
 from ED_app.randomstatement import random_statement
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+import time
 
 if __name__ == '__main__':
+    # This code checks for file updates in the sensor log and appends it to the stored data
+    # This will run indefinitely so long the app is running, and can be stopped by using Ctrl+C
+    # event_handler = FileModifiedHandler()
+    # observer = Observer()
+    # observer.schedule(event_handler, path='.', recursive=False)
+    # observer.start()
+    #
+    # try:
+    #     while True:
+    #         time.sleep(1)
+    # except KeyboardInterrupt:
+    #     observer.stop()
+    #
+    # observer.join()
+
     df = get_data()
     data_count = len(df)
     if data_count < 7:
@@ -18,7 +36,7 @@ if __name__ == '__main__':
                     id='title',
                     children='Water Sensor Dashboard'
                 ),
-                html.H3(
+                html.H2(
                     id='sub-title',
                     children='''
                             Track your water and power usage while showering over time!
@@ -26,7 +44,7 @@ if __name__ == '__main__':
                 # Left column
                 html.Div(
                     id='left-column',
-                    className='three columns',
+                    className='',
                     children=make_menu_layout()
                 ),
 
@@ -62,16 +80,16 @@ if __name__ == '__main__':
             progress_statement = 'You used the same amount of water this shower as last time.'
 
         df['Water Cost'] = liters_conversion(df['Water Usage'], 'money')
-        df['Gas Usage'] = temperature_conversion(df['Temperature'], df['Water Usage'], 'gas')
-        df['Gas Cost'] = temperature_conversion(df['Temperature'], df['Water Usage'], 'money')
+        df['Gas Usage'] = temperature_conversion(df['Temperature'], df['Water Usage'], 'gas')  # df['Date'])
+        df['Gas Cost'] = temperature_conversion(df['Temperature'], df['Water Usage'], 'money')  # df['Date'])
 
         df = calculate_savings(df)
 
         df_after_baseline = df.loc[7:]
-        total_water_use_savings = df_after_baseline['Water Usage Savings'].sum()
-        total_gas_use_savings = df_after_baseline['Gas Usage Savings'].sum()
-        total_water_cost_savings = df_after_baseline['Water Cost Savings'].sum()
-        total_gas_cost_savings = df_after_baseline['Gas Cost Savings'].sum()
+        total_water_use_savings = round(df_after_baseline['Water Usage Savings'].sum(), 2)
+        total_gas_use_savings = round(df_after_baseline['Gas Usage Savings'].sum(), 2)
+        total_water_cost_savings = round(df_after_baseline['Water Cost Savings'].sum(), 2)
+        total_gas_cost_savings = round(df_after_baseline['Gas Cost Savings'].sum(), 2)
 
         linegraph = Linegraph("Line Graph", 'Date', 'Water Usage', df)
 
@@ -80,59 +98,126 @@ if __name__ == '__main__':
         app.layout = html.Div(
             id='app_container',
             children=[
-                html.H1(
-                    id='title',
-                    children='Water Sensor Dashboard'
-                ),
-                html.H3(
-                    id='sub-title',
-                    children='''
-                    Track your water and power usage while showering over time!
-                '''),
-                # Left column
                 html.Div(
-                    id='left-column',
-                    className='three columns',
-                    children=make_menu_layout()
-                ),
-
-                # Right column
-                html.Div(
-                    id='right-column',
-                    className="nine columns",
+                    className='header',
                     children=[
-                        linegraph,
+                        html.Img(src=r'assets/watersensorlogo.png'),
                         html.Div(
-                            id='progress-statement',
-                            children=html.H3(progress_statement)
-                        ),
-                        html.Div(
-                            id='random-statement',
-                            children=html.H3(random_statement)
-                        ),
-                        html.Div(
-                            id='savings-boxes',
+                            className='title-bar',
                             children=[
-                                html.Div(id='water-use-savings',
-                                         children=[html.H4('You saved'),
-                                                   html.H3(total_water_use_savings),
-                                                   html.H4('liters of water so far!')]),
-                                html.Div(id='gas-use-savings',
-                                         children=[html.H4('You saved'),
-                                                   html.H3(total_gas_use_savings),
-                                                   html.H4('cubic meters of gas so far!')]),
-                                html.Div(id='water-cost-savings',
-                                         children=[html.H4('You saved'),
-                                                   html.H3(total_water_cost_savings),
-                                                   html.H4('euro in water so far!')]),
-                                html.Div(id='gas-cost-savings',
-                                         children=[html.H4('You saved'),
-                                                   html.H3(total_gas_cost_savings),
-                                                   html.H4('euro in gas so far!')]),
+                                html.H1(
+                                    id='title',
+                                    children='Water Sensor Dashboard'
+                                ),
+                                html.H2(
+                                    id='sub-title',
+                                    children='''
+                                    Track your water and power usage while showering over time!
+                                ''')
+                            ]
+                        )
+                    ]
+                ),
+                html.Div(
+                    className='main columns',
+                    children=[
+                        # Left column
+                        html.Div(
+                            className='menu',
+                            children=make_menu_layout()
+                        ),
+
+                        # Right column
+                        html.Div(
+                            className="data",
+                            children=[
+                                html.Div(
+                                    className='card',
+                                    children=linegraph
+                                ),
+                                html.Div(
+                                    className='columns two',
+                                    children=[
+                                        html.Div(
+                                            className='card',
+                                            children=html.Div(
+                                                id='progress-statement',
+                                                className='statement',
+                                                children=html.H4(progress_statement)
+                                            )
+                                        ),
+                                        html.Div(
+                                            className='card',
+                                            children=html.Div(
+                                                id='random-statement',
+                                                className='statement',
+                                                children=html.H4(random_statement)
+                                            )
+                                        )
+                                    ]
+                                ),
+                                html.Div(
+                                    className='columns four savings-boxes',
+                                    children=[
+                                        html.Div(
+                                            className='card',
+                                            children=[
+                                                html.Img(src=r'assets/water.png'),
+                                                html.Div(
+                                                    id='water-use-savings',
+                                                    children=[
+                                                        html.H3(total_water_use_savings),
+                                                        html.Span('Liters of water saved')
+                                                    ]
+                                                )
+                                            ]
+                                        ),
+                                        html.Div(
+                                            className='card',
+                                            children=[
+                                                html.Img(src=r'assets/money.png'),
+                                                html.Div(
+                                                    id='water-cost-savings',
+                                                    children=[
+                                                        html.H3(total_water_cost_savings),
+                                                        html.Span('Euro\'s saved on water')
+                                                    ]
+                                                )
+                                            ]
+                                        ),
+                                        html.Div(
+                                            className='card',
+                                            children=[
+                                                html.Img(src=r'assets/gas.png'),
+                                                html.Div(
+                                                    id='gas-use-savings',
+                                                    children=[
+                                                        html.H3(total_gas_use_savings),
+                                                        html.Span('m\u00b2 of gas saved')
+                                                    ]
+                                                )
+                                            ]
+                                        ),
+                                        html.Div(
+                                            className='card',
+                                            children=[
+                                                html.Img(src=r'assets/money.png'),
+                                                html.Div(
+                                                    id='gas-cost-savings',
+                                                    children=[
+                                                        html.H3(total_gas_cost_savings),
+                                                        html.Span('Euro\'s saved on gas')
+                                                    ]
+                                                )
+                                            ]
+                                        )
+                                    ]
+                                )
                             ]
                         )
                     ]
                 )
+
             ]
         )
 
@@ -163,4 +248,4 @@ if __name__ == '__main__':
                     return linegraph.generate_linegraph(new_df, 'Gas Cost')
             return linegraph.generate_linegraph(new_df, 'Water Usage')
 
-    app.run_server(debug=False, dev_tools_ui=False)
+    app.run_server(debug=True, dev_tools_ui=False)

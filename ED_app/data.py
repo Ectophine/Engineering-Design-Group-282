@@ -1,15 +1,63 @@
 import pandas as pd
 import random
+from datetime import datetime, timedelta
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+import time
 
 
 # Getting the data
 def get_data():
     data = []
     for i in range(1, 121):
-        random_int_1 = random.randint(1, 8)
+        random_int_1 = random.randint(90, 160)
         random_int_2 = random.randint(37, 43)
         data.append([i, random_int_1, random_int_2])
     return pd.DataFrame(data, columns=['Date', 'Water Usage', 'Temperature'])
+
+
+def get_data_real():
+    stored_data = 'storeddata.csv'
+    df = pd.read_csv(stored_data)
+    return df
+
+
+last_update_time = datetime.now
+
+
+class FileModifiedHandler(FileSystemEventHandler):
+    def on_modified(self, event):
+        global last_update_time
+        current_time = datetime.now()
+
+        if event.src_path == 'sensorlog':
+            if (current_time - last_update_time) > timedelta(minutes=1):
+                last_update_time = current_time
+                update_data()
+
+
+def parse_log_file(path):
+    with open(path, 'r') as file:
+        lines = file.readlines()
+
+    data = [line.strip().split(sep='|') for line in lines]
+
+    df = pd.DataFrame(data, columns=['MS', 'Flow Rate', 'Temperature', 'Total Water Usage'])
+    return df
+
+
+def update_data():
+    stored_data = 'storeddata.csv'
+    new_data = 'sensorlog'
+    current_date = datetime.now()
+    old_df = pd.read_csv(stored_data)
+    new_df = parse_log_file(new_data)
+    avg_temp = new_df['Temperature'].mean()
+    final_row = new_df.iloc[-1]
+    final_row['Date'] = current_date
+    updated_df = old_df.append(final_row, ignore_index=True)
+    updated_df.to_csv(stored_data, index=False)
+    return updated_df
 
 
 def set_baseline(df):
