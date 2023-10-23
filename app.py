@@ -7,6 +7,7 @@ from dash.dependencies import Input, Output
 from ED_app.cost import liters_conversion, temperature_conversion
 from ED_app.randomstatement import random_statement
 from watchdog.observers import Observer
+import ED_app.config
 
 if __name__ == '__main__':
     df = get_data()
@@ -15,34 +16,46 @@ if __name__ == '__main__':
         app.layout = html.Div(
             id='app_container',
             children=[
-                html.H1(
-                    id='title',
-                    children='Water Sensor Dashboard'
-                ),
-                html.H2(
-                    id='sub-title',
-                    children='''
-                            Track your water and power usage while showering over time!
-                        '''),
-                # Left column
                 html.Div(
-                    id='left-column',
-                    className='',
-                    children=make_menu_layout()
+                    className='header',
+                    children=[
+                        html.Img(src=r'assets/watersensorlogo.png'),
+                        html.Div(
+                            className='title-bar',
+                            children=[
+                                html.H1(
+                                    id='title',
+                                    children='Water Sensor Dashboard'
+                                ),
+                                html.H2(
+                                    id='sub-title',
+                                    children='''
+                                            Track your water and power usage while showering over time!
+                                        ''')
+                            ]
+                        )
+                    ]
                 ),
-
-                # Right column
                 html.Div(
-                    id='right-column',
-                    className="nine columns",
-                    children=[html.H3(
-                        id='baseline-reminder',
-                        children='''
-                        The app is still calculating your baseline. Keep showering normally with the shower
-                        sensor attached, and check back later to track your usage! The dashboard will be available after
-                        7 showers.
-                        '''
-                    )
+                    className='main columns',
+                    children=[
+                        html.Div(
+                            className='menu',
+                            children=html.Div(
+                                className='card',
+                                children=[
+                                    html.H3("Adjust your dashboard"),
+                                    html.Span("No adjustments available"),
+                                ]
+                            )
+                        ),
+                        html.Div(
+                            className="data",
+                            children=html.Div(
+                                className='card',
+                                children=html.H4(ED_app.config.no_data_text)
+                            )
+                        )
                     ]
                 )
             ]
@@ -243,4 +256,4 @@ if __name__ == '__main__':
     observer.schedule(event_handler, path='ED_app/data/log/', recursive=False)
     observer.start()
 
-    app.run_server(debug=False, dev_tools_ui=False)
+    app.run_server(debug=True, dev_tools_ui=False)
