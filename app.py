@@ -2,30 +2,13 @@ from ED_app.main import app
 from ED_app.views.linegraph import Linegraph
 from ED_app.views.menu import make_menu_layout
 from ED_app.data import get_data, change_timeline, calculate_savings, FileModifiedHandler
-from dash import html
+from dash import html, dcc
 from dash.dependencies import Input, Output
 from ED_app.cost import liters_conversion, temperature_conversion
 from ED_app.randomstatement import random_statement
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-import time
 
 if __name__ == '__main__':
-    # This code checks for file updates in the sensor log and appends it to the stored data
-    # This will run indefinitely so long the app is running, and can be stopped by using Ctrl+C
-    # event_handler = FileModifiedHandler()
-    # observer = Observer()
-    # observer.schedule(event_handler, path='.', recursive=False)
-    # observer.start()
-    #
-    # try:
-    #     while True:
-    #         time.sleep(1)
-    # except KeyboardInterrupt:
-    #     observer.stop()
-    #
-    # observer.join()
-
     df = get_data()
     data_count = len(df)
     if data_count < 7:
@@ -212,7 +195,10 @@ if __name__ == '__main__':
                                             ]
                                         )
                                     ]
-                                )
+                                ),
+                                dcc.Interval(id='live-updates',
+                                             interval=5000,
+                                             n_intervals=0)
                             ]
                         )
                     ]
@@ -224,13 +210,14 @@ if __name__ == '__main__':
 
         @app.callback(
             Output(linegraph.html_id, 'figure'),
-            Input("select-timeline", "value"),
+            Input("select-timeline", 'value'),
             Input("select-usage", 'value'),
-            Input('select-view', 'value')
+            Input('select-view', 'value'),
+            Input('live-updates', 'n_intervals')
         )
-        def update_plot(timeline, usage, view):
+        def update_plot(timeline, usage, view, n_intervals):
             # Filters the df based on the chosen timeline
-            new_df = df
+            new_df = get_data()
             if timeline != 'Daily':
                 new_df = change_timeline(df, timeline)
 
@@ -248,4 +235,12 @@ if __name__ == '__main__':
                     return linegraph.generate_linegraph(new_df, 'Gas Cost')
             return linegraph.generate_linegraph(new_df, 'Water Usage')
 
-    app.run_server(debug=True, dev_tools_ui=False)
+    # This code checks for file updates in the sensor log and appends it to the stored data
+    # This will run indefinitely so long the app is running, and can be stopped by using Ctrl+C
+
+    event_handler = FileModifiedHandler()
+    observer = Observer()
+    observer.schedule(event_handler, path='ED_app/data/log/', recursive=False)
+    observer.start()
+
+    app.run_server(debug=False, dev_tools_ui=False)
