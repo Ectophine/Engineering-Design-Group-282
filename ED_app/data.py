@@ -1,5 +1,5 @@
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 from watchdog.events import FileSystemEventHandler
 import ED_app.config
 
@@ -12,18 +12,17 @@ def get_data():
 
 class FileModifiedHandler(FileSystemEventHandler):
     def on_modified(self, event):
-        print('File was modified!')
-        current_time = datetime.now()
-        if (current_time - ED_app.config.last_update_time) > timedelta(seconds=10):
-            ED_app.config.last_update_time = current_time
-            update_data()
+        print('File has been modified!')
+        ED_app.config.last_update_time = datetime.now()
+        print(ED_app.config.last_update_time)
 
 
 def parse_log_file(path):
     with open(path, 'r') as file:
         lines = file.readlines()
-
     data = [line.strip().split(sep=' | ') for line in lines]
+    del data[-1]
+
     for line in data:
         line[0] = float(line[0][:-3])
         line[1] = float(line[1][:-6])

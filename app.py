@@ -1,7 +1,9 @@
+from datetime import datetime, timedelta
+
 from ED_app.main import app
 from ED_app.views.linegraph import Linegraph
 from ED_app.views.menu import make_menu_layout
-from ED_app.data import get_data, change_timeline, calculate_savings, FileModifiedHandler
+from ED_app.data import get_data, change_timeline, calculate_savings, FileModifiedHandler, update_data
 from dash import html, dcc
 from dash.dependencies import Input, Output
 from ED_app.cost import liters_conversion, temperature_conversion
@@ -229,6 +231,14 @@ if __name__ == '__main__':
             Input('live-updates', 'n_intervals')
         )
         def update_plot(timeline, usage, view, n_intervals):
+            # Timer interval for updating dataframe
+            current_time = datetime.now()
+            elapsed_time = current_time - ED_app.config.last_update_time
+            print(ED_app.config.last_update_time)
+            if timedelta(seconds=90) < elapsed_time < timedelta(seconds=95):
+                update_data()
+                print('Sensor is off. DataFrame has been updated.')
+
             # Filters the df based on the chosen timeline
             new_df = get_data()
             if timeline != 'Daily':
