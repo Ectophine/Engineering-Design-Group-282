@@ -86,7 +86,7 @@ def liters_conversion(liters, metric='money'):
     return conversion
 
 
-def temperature_conversion(temperature, liters, metric='money'):
+def temperature_conversion(temperature, liters, metric, date):
     if 4 < 5 < 11:
         season = 'summer'
     else:

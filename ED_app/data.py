@@ -2,11 +2,15 @@ import pandas as pd
 from datetime import datetime
 from watchdog.events import FileSystemEventHandler
 import ED_app.config
+from ED_app.cost import liters_conversion, temperature_conversion
 
 
 def get_data():
     df = pd.read_csv('ED_app/data/storeddata.csv')
     df['Date'] = pd.to_datetime(df['Date'])
+    df['Water Cost'] = liters_conversion(df['Water Usage'], 'money')
+    df['Gas Usage'] = temperature_conversion(df['Temperature'], df['Water Usage'], 'gas', df['Date'])
+    df['Gas Cost'] = temperature_conversion(df['Temperature'], df['Water Usage'], 'money', df['Date'])
     return df
 
 
@@ -27,7 +31,7 @@ def parse_log_file(path):
         line[0] = float(line[0][:-3])
         line[1] = float(line[1][:-6])
         line[2] = float(line[2][12:-2])
-        line[3] = float(line[3][:-3])
+        line[3] = float(line[3][:-3]) / 1000
 
     df = pd.DataFrame(data, columns=['MS', 'Flow Rate', 'Temperature', 'Total Water Usage'])
 
@@ -41,6 +45,11 @@ def update_data():
     avg_temp = new_df['Temperature'].mean()
     water_usage = new_df.iloc[-1]['Total Water Usage']
     new_row = pd.DataFrame([[current_date, water_usage, avg_temp]], columns=['Date', 'Water Usage', 'Temperature'])
+    new_row['Water Cost'] = liters_conversion(new_row['Water Usage'], 'money')
+    new_row['Gas Usage'] = temperature_conversion(new_row['Temperature'], new_row['Water Usage'], 'gas',
+                                                  new_row['Date'])
+    new_row['Gas Cost'] = temperature_conversion(new_row['Temperature'], new_row['Water Usage'], 'money',
+                                                 new_row['Date'])
     updated_df = pd.concat([old_df, new_row], ignore_index=True)
     updated_df.to_csv('ED_app/data/storeddata.csv', index=False)
     return updated_df

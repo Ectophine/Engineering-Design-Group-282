@@ -6,7 +6,6 @@ from ED_app.views.menu import make_menu_layout
 from ED_app.data import get_data, change_timeline, calculate_savings, FileModifiedHandler, update_data
 from dash import html, dcc
 from dash.dependencies import Input, Output
-from ED_app.cost import liters_conversion, temperature_conversion
 from ED_app.randomstatement import random_statement
 from watchdog.observers import Observer
 import ED_app.config
@@ -76,10 +75,6 @@ if __name__ == '__main__':
                 ' Great job!')
         else:
             progress_statement = 'You used the same amount of water this shower as last time.'
-
-        df['Water Cost'] = liters_conversion(df['Water Usage'], 'money')
-        df['Gas Usage'] = temperature_conversion(df['Temperature'], df['Water Usage'], 'gas')  # df['Date'])
-        df['Gas Cost'] = temperature_conversion(df['Temperature'], df['Water Usage'], 'money')  # df['Date'])
 
         df = calculate_savings(df)
 
@@ -234,7 +229,6 @@ if __name__ == '__main__':
             # Timer interval for updating dataframe
             current_time = datetime.now()
             elapsed_time = current_time - ED_app.config.last_update_time
-            print(ED_app.config.last_update_time)
             if timedelta(seconds=90) < elapsed_time < timedelta(seconds=95):
                 update_data()
                 print('Sensor is off. DataFrame has been updated.')
@@ -266,4 +260,4 @@ if __name__ == '__main__':
     observer.schedule(event_handler, path='ED_app/data/log/', recursive=False)
     observer.start()
 
-    app.run_server(debug=True, dev_tools_ui=False)
+    app.run_server(debug=False, dev_tools_ui=False)

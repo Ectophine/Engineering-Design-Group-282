@@ -44,7 +44,7 @@ class Linegraph(html.Div):
         if view == 'Amount':
             self.fig.add_trace(
                 go.Scatter(x=new_dataframe['Date'], y=new_dataframe['Water Usage'], mode='lines', name='Water '
-                                                                                                               'Usage'))
+                                                                                                       'Usage'))
             self.fig.add_trace(
                 go.Scatter(x=new_dataframe['Date'], y=new_dataframe['Gas Usage'], mode='lines', name='Gas Usage',
                            yaxis='y2'))
@@ -59,7 +59,7 @@ class Linegraph(html.Div):
         elif view == 'Cost':
             self.fig.add_trace(
                 go.Scatter(x=new_dataframe['Date'], y=new_dataframe['Water Cost'], mode='lines', name='Water '
-                                                                                                              'Cost'))
+                                                                                                      'Cost'))
             self.fig.add_trace(
                 go.Scatter(x=new_dataframe['Date'], y=new_dataframe['Gas Cost'], mode='lines', name='Gas Cost',
                            yaxis='y2'))
